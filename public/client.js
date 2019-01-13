@@ -6,7 +6,9 @@ $( document ).ready(function() {
     //var items = [];
     itemsRaw = data;
     $.each(data, function(i, val) {
-      items.push('<li class="bookItem" id="' + i + '">' + val.title + ' - ' + val.commentcount + ' comments</li>');
+      val.forEach((e, index) => {
+      items.push('<li class="bookItem" id="' + index + '">' + e.title + ' - ' + e.commentcount + ' comments</li>');
+    });
       return ( i !== 14 );
     });
     if (items.length >= 15) {
@@ -17,11 +19,11 @@ $( document ).ready(function() {
       html: items.join('')
       }).appendTo('#display');
   });
-  
+
   var comments = [];
   $('#display').on('click','li.bookItem',function() {
-    $("#detailTitle").html('<b>'+itemsRaw[this.id].title+'</b> (id: '+itemsRaw[this.id]._id+')');
-    $.getJSON('/api/books/'+itemsRaw[this.id]._id, function(data) {
+    $("#detailTitle").html('<b>'+itemsRaw.books[this.id].title+'</b> (id: '+itemsRaw.books[this.id]._id+')');
+    $.getJSON('/api/books/'+itemsRaw.books[this.id]._id, function(data) {
       comments = [];
       $.each(data.comments, function(i, val) {
         comments.push('<li>' +val+ '</li>');
@@ -31,8 +33,8 @@ $( document ).ready(function() {
       comments.push('<button class="btn btn-danger deleteBook" id="'+ data._id+'">Delete Book</button>');
       $('#detailComments').html(comments.join(''));
     });
-  });
-  
+  }); 
+
   $('#bookDetail').on('click','button.deleteBook',function() {
     $.ajax({
       url: '/api/books/'+this.id,
@@ -42,7 +44,7 @@ $( document ).ready(function() {
         $('#detailComments').html('<p style="color: red;">'+data+'<p><p>Refresh the page</p>');
       }
     });
-  });  
+  });
   
   $('#bookDetail').on('click','button.addComment',function() {
     var newComment = $('#commentToAdd').val();
@@ -80,6 +82,6 @@ $( document ).ready(function() {
         //update list
       }
     });
-  }); 
-  
+  });
+
 });
